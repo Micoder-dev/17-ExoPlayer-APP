@@ -9,7 +9,11 @@
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/my_player_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:use_controller="true"
+        app:controller_layout_id="@layout/my_controller"
+        app:fastforward_increment="10000"
+        app:rewind_increment="10000"/>
 
     <ProgressBar
         android:id="@+id/progress_bar"
