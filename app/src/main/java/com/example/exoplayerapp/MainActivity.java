@@ -2,6 +2,7 @@ package com.example.exoplayerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,14 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
 
     private Player.EventListener mEventListener;
+
+    private PermissionToken permissionToken;
+    private FloatingActionButton fab;
 
     private String[] music_list = new String[] {
 
@@ -71,6 +83,16 @@ public class MainActivity extends AppCompatActivity {
 
         mSimpleExoPlayer.addListener(mEventListener);
 
+        fab = findViewById(R.id.my_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                setupPermissions();
+
+            }
+        });
+
     }
 
     @Override
@@ -85,4 +107,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void setupPermissions() {
+
+        Dexter.withContext(this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ).withListener(new MultiplePermissionsListener() {
+                    @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                        // Download the current music
+
+                    }
+                    @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                        permissionToken.continuePermissionRequest();
+
+                    }
+                }).check();
+
+    }
+
 }
