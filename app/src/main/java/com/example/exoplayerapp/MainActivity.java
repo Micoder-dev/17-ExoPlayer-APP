@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 
@@ -14,6 +17,10 @@ public class MainActivity extends AppCompatActivity {
     private PlayerView mPlayerView;
     private SimpleExoPlayer mSimpleExoPlayer;
 //    private String music_url = "https://opengameart.org/sites/default/files/Cyberpunk%20Moonlight%20Sonata_0.mp3";
+
+    private ProgressBar mProgressBar;
+
+    private Player.EventListener mEventListener;
 
     private String[] music_list = new String[] {
 
@@ -31,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPlayerView = findViewById(R.id.my_player_view);
+        mProgressBar = findViewById(R.id.progress_bar);
 
         mSimpleExoPlayer  = new SimpleExoPlayer.Builder(this).build();
 
@@ -47,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
       //  mSimpleExoPlayer.setMediaItem(mediaItem);
         mSimpleExoPlayer.prepare();
         mSimpleExoPlayer.play();
+
+        mEventListener = new Player.EventListener() {
+
+            @Override
+            public void onPlaybackStateChanged(int state) {
+                if (state == Player.STATE_BUFFERING) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                }
+                else if (state == Player.STATE_READY) {
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            }
+        };
+
+        mSimpleExoPlayer.addListener(mEventListener);
 
     }
 
