@@ -3,8 +3,11 @@ package com.example.exoplayerapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -119,6 +122,11 @@ public class MainActivity extends AppCompatActivity {
 
                         // Download the current music
 
+                        if (report.areAllPermissionsGranted()) {
+
+                            downloadTheCurrentMusic(mSimpleExoPlayer.getCurrentMediaItem().playbackProperties.uri.toString());
+                        }
+
                     }
                     @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
 
@@ -126,6 +134,21 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }).check();
+
+    }
+
+    private void downloadTheCurrentMusic(String musicURLString) {
+
+        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(musicURLString);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        String musicName = musicURLString.substring(musicURLString.lastIndexOf("/") + 1);
+        request.setTitle(musicName);
+        request.setVisibleInDownloadsUi(true);
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.getLastPathSegment());
+        downloadManager.enqueue(request);
 
     }
 
